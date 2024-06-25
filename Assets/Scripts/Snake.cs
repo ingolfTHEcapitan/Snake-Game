@@ -4,14 +4,12 @@ using UnityEngine;
 public class Snake : MonoBehaviour
 {
     private Vector2 direction;
-    private Vector2 currentDirection; // Текущее направление движения
+    private Vector2 currentDirection; // Текущее направление движения змейки
     private List<Transform> segments = new List<Transform>(); // Список сегментов змейки
-    private List<Vector2> segmentDirections = new List<Vector2>(); // Список направлений сегментов
-
+    private List<Vector2> segmentDirections = new List<Vector2>(); // Список направлений сегментов змейки
 
     public Transform segmentPrefab;
-    public Transform tailPrefab; // Добавляем публичное поле для хвостового префабаpublic Transform cornerPrefab; // Префаб углового сегмента
-
+    public Transform tailPrefab; // Добавляем публичное поле для хвостового префаба
     public float fixedTimestep = 0.06f;
     public int initialSize = 6; // начальный размер змейки
 
@@ -33,24 +31,16 @@ public class Snake : MonoBehaviour
     {
         // Направление движения змейки на основе ввода
         if (Input.GetKeyDown(KeyCode.W) && currentDirection != Vector2.down)
-        { 
             direction = Vector2.up;
             
-        }
         else if (Input.GetKeyDown(KeyCode.S) && currentDirection != Vector2.up) 
-        { 
             direction = Vector2.down;
-        }
-        else if (Input.GetKeyDown(KeyCode.A) && currentDirection != Vector2.right) 
-        { 
-            direction = Vector2.left;
-        }
-        else if (Input.GetKeyDown(KeyCode.D) && currentDirection != Vector2.left) 
-        { 
-            direction = Vector2.right;
-        }
 
-       
+        else if (Input.GetKeyDown(KeyCode.A) && currentDirection != Vector2.right) 
+            direction = Vector2.left;
+ 
+        else if (Input.GetKeyDown(KeyCode.D) && currentDirection != Vector2.left) 
+            direction = Vector2.right;  
     }
 
     // Движение змейки в зависимости от направления
@@ -58,12 +48,6 @@ public class Snake : MonoBehaviour
     {
         // Сохраняем текущие направления сегментов перед обновлением позиций
         segmentDirections.Insert(0, direction);
-
-        // Удаляем старое направление головы, чтобы сохранить соответствие длины списков сегментов и направлений
-        if (segmentDirections.Count > segments.Count)
-        {
-            segmentDirections.RemoveAt(segmentDirections.Count - 1);
-        }
 
         // Проходимся по всем сегментам в списке с конца
         for (int i = segments.Count - 1; i > 0; i--)
@@ -73,12 +57,13 @@ public class Snake : MonoBehaviour
             segments[i].rotation = Quaternion.Euler(new Vector3(0, 0, GetAngleFromDirection(segmentDirections[i])));
         }
 
-        // Обновляем позицию и угол поворота головы
+        // Обновляем позицию головы
         transform.position = new Vector3(
             Mathf.Round(transform.position.x) + direction.x,
-            Mathf.Round(transform.position.y) + direction.y,
-            0.0f
+            Mathf.Round(transform.position.y) + direction.y
         );
+
+        // Обновляем и угол поворота головы
         transform.rotation = Quaternion.Euler(new Vector3(0, 0, GetAngleFromDirection(direction)));
 
         // Обновляем текущее направление движения
@@ -109,8 +94,6 @@ public class Snake : MonoBehaviour
         return angle;
     }
 
-
-
     private void GrowSnake()
     {
         // Проверяем, есть ли уже хвостовой сегмент
@@ -133,7 +116,6 @@ public class Snake : MonoBehaviour
         // Добавляем новое направление для нового сегмента
         segmentDirections.Add(segmentDirections[segments.Count - 2]);
     }
-
 
     private void ResetGame()
     {
