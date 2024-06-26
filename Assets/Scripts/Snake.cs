@@ -66,10 +66,13 @@ public class Snake : MonoBehaviour
 
             // Обновляем позицию сегмента
             segments[i].position = segments[i - 1].position;
+            
 
             // Определяем предыдущее и текущее направления сегментов
             Vector2 previousDirection = segmentDirections[i];
             Vector2 currentDirection = segmentDirections[i - 1];
+
+            segments[i].rotation = Quaternion.Euler(new Vector3(0, 0, GetAngleFromDirection2(segmentDirections[i], segmentDirections[i-1])));
 
             // Проверяем все возможные комбинации направлений для угловых сегментов
             if ((previousDirection == Vector2.up && currentDirection == Vector2.right) ||
@@ -92,6 +95,7 @@ public class Snake : MonoBehaviour
             {
                 ReplaceWithCornerPrefab(i, cornerLeftUpPrefab);
             }
+
             else
             {
                 segments[i].rotation = Quaternion.Euler(new Vector3(0, 0, GetAngleFromDirection(segmentDirections[i])));
@@ -143,6 +147,41 @@ public class Snake : MonoBehaviour
             isCornerSegment[index] = true; // Помечаем сегмент как угловой
         }
     }
+
+
+    private float GetAngleFromDirection2(Vector2 previousDirection, Vector2 currentDirection)
+    {
+        float angle = 0f;
+       
+        if (previousDirection == Vector2.down && currentDirection == Vector2.right)
+        {
+            angle = 90f;
+        }
+        else if (previousDirection == Vector2.up && currentDirection == Vector2.left)
+        {
+            angle = 90f;
+        }
+
+        else if (previousDirection == Vector2.up && currentDirection == Vector2.right)
+        {
+            angle = -90f;
+        }
+        else if (previousDirection == Vector2.down && currentDirection == Vector2.left)
+        {
+            angle = -90f;
+        }
+
+
+
+
+        return angle;
+    }
+
+
+
+
+
+
 
     private float GetAngleFromDirection(Vector2 direction)
     {
