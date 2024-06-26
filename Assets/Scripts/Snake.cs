@@ -58,8 +58,6 @@ public class Snake : MonoBehaviour
         // Сохраняем текущие направления сегментов перед обновлением позиций
         segmentDirections.Insert(0, direction);
 
-        
-
         // Проходимся по всем сегментам в списке с конца
         for (int i = segments.Count - 1; i > 0; i--)
         {
@@ -71,8 +69,8 @@ public class Snake : MonoBehaviour
             // Определяем предыдущее и текущее направления сегментов
             Vector2 previousDirection = segmentDirections[i];
             Vector2 currentDirection = segmentDirections[i - 1];
-
-            segments[i].rotation = Quaternion.Euler(new Vector3(0, 0, GetAngleFromDirection2(segmentDirections[i], segmentDirections[i-1])));
+            
+            segments[i].rotation = Quaternion.Euler(new Vector3(0, 0, GetAngleFromDirection2( previousDirection, currentDirection)));
 
             // Проверяем все возможные комбинации направлений для угловых сегментов
             if ((previousDirection == Vector2.up && currentDirection == Vector2.right) ||
@@ -148,40 +146,27 @@ public class Snake : MonoBehaviour
         }
     }
 
-
-    private float GetAngleFromDirection2(Vector2 previousDirection, Vector2 currentDirection)
+    private float GetAngleFromDirection2( Vector2 previousDirection, Vector2 currentDirection)
     {
         float angle = 0f;
+
+        if ((previousDirection == Vector2.down && currentDirection == Vector2.right) ||
+        (previousDirection == Vector2.up && currentDirection == Vector2.left) ||
+        (previousDirection == Vector2.left && currentDirection == Vector2.down) ||
+        (previousDirection == Vector2.right && currentDirection == Vector2.up))
+        {
+            angle = 90f;
+        }
+        else if ((previousDirection == Vector2.left && currentDirection == Vector2.up) ||
+                (previousDirection == Vector2.up && currentDirection == Vector2.right) ||
+                (previousDirection == Vector2.down && currentDirection == Vector2.left) ||
+                (previousDirection == Vector2.right && currentDirection == Vector2.down))
+        {
+            angle = -90f;
+        }
        
-        if (previousDirection == Vector2.down && currentDirection == Vector2.right)
-        {
-            angle = 90f;
-        }
-        else if (previousDirection == Vector2.up && currentDirection == Vector2.left)
-        {
-            angle = 90f;
-        }
-
-        else if (previousDirection == Vector2.up && currentDirection == Vector2.right)
-        {
-            angle = -90f;
-        }
-        else if (previousDirection == Vector2.down && currentDirection == Vector2.left)
-        {
-            angle = -90f;
-        }
-
-
-
-
         return angle;
     }
-
-
-
-
-
-
 
     private float GetAngleFromDirection(Vector2 direction)
     {
