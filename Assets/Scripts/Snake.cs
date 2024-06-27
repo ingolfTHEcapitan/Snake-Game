@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -5,6 +6,7 @@ public class Snake : MonoBehaviour
 {
     private Vector2 direction;
     private Vector2 currentDirection; // Текущее направление движения
+    private Vector2 previousDirection = Vector2.zero;
     private List<Transform> segments = new List<Transform>(); // Список сегментов змейки
     private List<Vector2> segmentDirections = new List<Vector2>(); // Список направлений сегментов
     private List<bool> isCornerSegment = new List<bool>(); // Флаги для определения угловых сегментов
@@ -16,8 +18,11 @@ public class Snake : MonoBehaviour
     public Transform cornerDownLeftPrefab; // Префаб углового сегмента: вниз-влево
     public Transform cornerLeftUpPrefab; // Префаб углового сегмента: влево-вверх
 
+    
+
     public float fixedTimestep = 0.06f;
     public int initialSize = 6; // начальный размер змейки
+
 
 
     private void Awake()
@@ -36,19 +41,35 @@ public class Snake : MonoBehaviour
         // Направление движения змейки на основе ввода
         if (Input.GetKeyDown(KeyCode.W) && currentDirection != Vector2.down)
         {
+
             direction = Vector2.up;
+            CheckDirectionChange();
+
         }
         else if (Input.GetKeyDown(KeyCode.S) && currentDirection != Vector2.up)
         {
             direction = Vector2.down;
+            CheckDirectionChange();
         }
         else if (Input.GetKeyDown(KeyCode.A) && currentDirection != Vector2.right)
         {
             direction = Vector2.left;
+            CheckDirectionChange();
         }
         else if (Input.GetKeyDown(KeyCode.D) && currentDirection != Vector2.left)
         {
             direction = Vector2.right;
+            CheckDirectionChange();
+
+        }
+    }
+
+    private void CheckDirectionChange()
+    {
+        if (direction != previousDirection)
+        {
+            SoundManager.instanсe.PlaySound(SoundManager.instanсe.efxSource2, SoundManager.instanсe.moveSound);
+            previousDirection = direction; // Обновляем предыдущее направление
         }
     }
 
@@ -64,6 +85,7 @@ public class Snake : MonoBehaviour
 
             // Обновляем позицию сегмента
             segments[i].position = segments[i - 1].position;
+
             
 
             // Определяем предыдущее и текущее направления сегментов
@@ -118,19 +140,23 @@ public class Snake : MonoBehaviour
                     segments[i] = newSegment;
                     isCornerSegment[i] = false; // Помечаем сегмент как не угловой
                 }
-            }  
+            }
+
+            
         }
 
-        // Обновляем позицию и угол поворота головы
+        // Обновляем позицию
         transform.position = new Vector3(
             Mathf.Round(transform.position.x) + direction.x,
             Mathf.Round(transform.position.y) + direction.y,
             0.0f
         );
+        // Обновляем угол поворота головы
         transform.rotation = Quaternion.Euler(new Vector3(0, 0, GetAngleFromDirection(direction)));
 
         // Обновляем текущее направление движения
         currentDirection = direction;
+        
     }
 
     private void ReplaceWithCornerPrefab(int index, Transform cornerPrefab)
@@ -164,6 +190,8 @@ public class Snake : MonoBehaviour
         {
             angle = -90f;
         }
+
+
        
         return angle;
     }
@@ -228,14 +256,14 @@ public class Snake : MonoBehaviour
 
         // Добавляем голову обратно
         segments.Add(transform);
-        segmentDirections.Add(Vector2.right);
+        segmentDirections.Add(Vector2.zero);
         isCornerSegment.Add(false); // Голова не является угловой
 
         // Добавляем начальные сегменты змейки, кроме последнего хвостового сегмента
         for (int i = 1; i < initialSize - 1; i++)
         {
             segments.Add(Instantiate(segmentPrefab));
-            segmentDirections.Add(Vector2.right);
+            segmentDirections.Add(Vector2.zero);
             isCornerSegment.Add(false); // Начальные сегменты не являются угловыми
         }
 
@@ -243,7 +271,7 @@ public class Snake : MonoBehaviour
         if (initialSize > 1)
         {
             Transform tailSegment = Instantiate(tailPrefab);
-            tailSegment.position = segments[segments.Count - 1].position;
+            tailSegment.position = new Vector3(-1, 0);
             tailSegment.rotation = Quaternion.Euler(new Vector3(0, 0, GetAngleFromDirection(Vector2.right)));
             segments.Add(tailSegment);
             segmentDirections.Add(Vector2.right);
@@ -251,13 +279,18 @@ public class Snake : MonoBehaviour
         }
 
         // Сбрасываем позицию головы
-        transform.position = Vector3.right;
+        transform.position = new Vector3(1, 0);
 
         // Устанавливаем начальное направление движения
         direction = Vector3.right;
 
+        previousDirection = Vector2.zero;
+        CheckDirectionChange();
+
         // Устанавливаем текущее направление движения
         currentDirection = direction;
+
+        Console.WriteLine("wqd");
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -265,10 +298,13 @@ public class Snake : MonoBehaviour
         if (collision.tag == "Food")
         {
             GrowSnake();
+            SoundManager.instanсe.PlaySound(SoundManager.instanсe.efxSource1, SoundManager.instanсe.eatFoodSound);
         }
         else if (collision.tag == "Obstacle")
         {
             ResetGame();
+            SoundManager.instanсe.PlaySound(SoundManager.instanсe.efxSource1, SoundManager.instanсe.gameOverSound);
+
         }
     }
 }

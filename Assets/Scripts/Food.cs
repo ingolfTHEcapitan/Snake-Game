@@ -7,8 +7,7 @@ using Random = UnityEngine.Random;
 public class Food : MonoBehaviour
 {
     private BoxCollider2D gridArea;
-
-
+  
     void Start()
     {
         gridArea = GameObject.Find("GridArea").GetComponent<BoxCollider2D>();
@@ -31,7 +30,8 @@ public class Food : MonoBehaviour
     {
         if (collision.tag == "Player")
         { 
-             RandomizePosition();
+            RandomizePosition();
+            
         }
     }
 
