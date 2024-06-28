@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using static SoundManager;
 
 public class Snake : MonoBehaviour
 {
@@ -68,7 +69,7 @@ public class Snake : MonoBehaviour
     {
         if (direction != previousDirection)
         {
-            SoundManager.instanñe.PlaySound(SoundManager.instanñe.efxSource2, SoundManager.instanñe.moveSound);
+            instanñe.PlaySound(instanñe.efxSource2, instanñe.moveSound);
             previousDirection = direction; // Îáíîâëÿåì ïğåäûäóùåå íàïğàâëåíèå
         }
     }
@@ -289,8 +290,6 @@ public class Snake : MonoBehaviour
 
         // Óñòàíàâëèâàåì òåêóùåå íàïğàâëåíèå äâèæåíèÿ
         currentDirection = direction;
-
-        Console.WriteLine("wqd");
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -298,12 +297,12 @@ public class Snake : MonoBehaviour
         if (collision.tag == "Food")
         {
             GrowSnake();
-            SoundManager.instanñe.PlaySound(SoundManager.instanñe.efxSource1, SoundManager.instanñe.eatFoodSound);
+            instanñe.PlaySound(instanñe.efxSource1, instanñe.eatFoodSound);
         }
         else if (collision.tag == "Obstacle")
         {
             ResetGame();
-            SoundManager.instanñe.PlaySound(SoundManager.instanñe.efxSource1, SoundManager.instanñe.gameOverSound);
+            instanñe.PlaySound(instanñe.efxSource1, instanñe.gameOverSound);
 
         }
     }

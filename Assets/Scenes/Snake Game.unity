@@ -1265,7 +1265,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1830849547}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1, y: 0, z: 0}
+  m_LocalPosition: {x: 3, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1291,7 +1291,7 @@ MonoBehaviour:
   cornerDownLeftPrefab: {fileID: 216922478534956814, guid: 665e5396ef6b8fb49ae79d6d4a1a8e85, type: 3}
   cornerLeftUpPrefab: {fileID: 6033582260066577587, guid: 17fcf59262e58934d9e5d7fc34e603e2, type: 3}
   fixedTimestep: 0.12
-  initialSize: 7
+  initialSize: 3
 --- !u!1 &6610555779457051072
 GameObject:
   m_ObjectHideFlags: 0
