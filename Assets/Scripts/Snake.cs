@@ -19,8 +19,6 @@ public class Snake : MonoBehaviour
     public Transform cornerDownLeftPrefab; // Префаб углового сегмента: вниз-влево
     public Transform cornerLeftUpPrefab; // Префаб углового сегмента: влево-вверх
 
-    
-
     public float fixedTimestep = 0.06f;
     public int initialSize = 6; // начальный размер змейки
 
@@ -87,13 +85,13 @@ public class Snake : MonoBehaviour
             // Обновляем позицию сегмента
             segments[i].position = segments[i - 1].position;
 
-            
+
 
             // Определяем предыдущее и текущее направления сегментов
             Vector2 previousDirection = segmentDirections[i];
             Vector2 currentDirection = segmentDirections[i - 1];
-            
-            segments[i].rotation = Quaternion.Euler(new Vector3(0, 0, GetAngleFromDirection2( previousDirection, currentDirection)));
+
+            segments[i].rotation = Quaternion.Euler(new Vector3(0, 0, GetAngleFromDirection2(previousDirection, currentDirection)));
 
             // Проверяем все возможные комбинации направлений для угловых сегментов
             if ((previousDirection == Vector2.up && currentDirection == Vector2.right) ||
@@ -143,7 +141,7 @@ public class Snake : MonoBehaviour
                 }
             }
 
-            
+
         }
 
         // Обновляем позицию
@@ -157,7 +155,7 @@ public class Snake : MonoBehaviour
 
         // Обновляем текущее направление движения
         currentDirection = direction;
-        
+
     }
 
     private void ReplaceWithCornerPrefab(int index, Transform cornerPrefab)
@@ -173,7 +171,7 @@ public class Snake : MonoBehaviour
         }
     }
 
-    private float GetAngleFromDirection2( Vector2 previousDirection, Vector2 currentDirection)
+    private float GetAngleFromDirection2(Vector2 previousDirection, Vector2 currentDirection)
     {
         float angle = 0f;
 
@@ -193,7 +191,7 @@ public class Snake : MonoBehaviour
         }
 
 
-       
+
         return angle;
     }
 
@@ -279,17 +277,20 @@ public class Snake : MonoBehaviour
             isCornerSegment.Add(false); // Хвостовой сегмент не является угловым
         }
 
-        // Сбрасываем позицию головы
-        transform.position = new Vector3(1, 0);
-
         // Устанавливаем начальное направление движения
         direction = Vector3.right;
 
-        previousDirection = Vector2.zero;
-        CheckDirectionChange();
+        // Сбрасываем позицию головы
+        transform.position = new Vector3(1, 0);
+        transform.rotation = Quaternion.Euler(new Vector3(0, 0, GetAngleFromDirection(direction)));
 
+        
+
+
+        previousDirection = Vector2.zero;
         // Устанавливаем текущее направление движения
         currentDirection = direction;
+        Time.timeScale = 0.0f;   
     }
 
     private void OnTriggerEnter2D(Collider2D collision)

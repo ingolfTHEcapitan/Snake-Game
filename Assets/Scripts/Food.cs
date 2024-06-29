@@ -17,8 +17,7 @@ public class Food : MonoBehaviour
     {
         if (collision.tag == "Player")
         { 
-            transform.position = gridManager.RandomizePosition();
-            
+            transform.position = gridManager.RandomizePosition();    
         }
     }
 }
