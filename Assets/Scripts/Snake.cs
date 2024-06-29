@@ -297,11 +297,13 @@ public class Snake : MonoBehaviour
         if (collision.tag == "Food")
         {
             GrowSnake();
+            EventManager.OnFoodIsEaten();
             instanñe.PlaySound(instanñe.efxSource1, instanñe.eatFoodSound);
         }
         else if (collision.tag == "Obstacle")
         {
             ResetGame();
+            EventManager.OnSnakeDied();
             instanñe.PlaySound(instanñe.efxSource1, instanñe.gameOverSound);
 
         }
