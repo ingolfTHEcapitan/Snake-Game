@@ -1,18 +1,23 @@
-using UnityEngine;
 using UnityEngine.Events;
 
 public class EventManager
 {
-    public static UnityEvent foodIs휺ten = new UnityEvent();
-    public static UnityEvent snakeDied = new UnityEvent();
+	public static UnityEvent foodIs휺ten = new UnityEvent();
+	public static UnityEvent snakeDied = new UnityEvent();
+	public static UnityEvent snakeIsMoving = new UnityEvent();
 
-    public static void OnFoodIsEaten()
-    {
-        foodIs휺ten?.Invoke();
-    }
+	public static void OnFoodIsEaten()
+	{
+		foodIs휺ten?.Invoke();
+	}
 
-    public static void OnSnakeDied()
-    {
-        snakeDied?.Invoke();
-    }
+	public static void OnSnakeDied()
+	{
+		snakeDied?.Invoke();
+	}
+	
+	public static void OnSnakeIsMoving()
+	{
+		snakeIsMoving?.Invoke();
+	}
 }

@@ -1,8 +1,5 @@
-using System;
 using System.Collections.Generic;
-using Unity.VisualScripting.ReorderableList.Element_Adder_Menu;
 using UnityEngine;
-using static SoundManager;
 
 public class Snake : MonoBehaviour
 {
@@ -64,7 +61,7 @@ public class Snake : MonoBehaviour
 	{
 		if (direction != previousDirection)
 		{
-			instanсe.PlaySound(instanсe.efxSource2, instanсe.moveSound);
+			EventManager.OnSnakeIsMoving();
 			previousDirection = direction; // Обновляем предыдущее направление
 		}
 	}
@@ -146,7 +143,6 @@ public class Snake : MonoBehaviour
 		DrawSnake();
 	}
 
-	
 	private void DrawSnake()
 	{
 		UpdateHeadGraphics();
