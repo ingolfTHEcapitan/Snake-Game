@@ -15,7 +15,7 @@ public class Food : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.tag == "Player")
+        if (collision.tag == "Obstacle")
         { 
             transform.position = gridManager.RandomizePosition();    
         }

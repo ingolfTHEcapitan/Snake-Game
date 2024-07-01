@@ -1,312 +1,238 @@
 using System;
 using System.Collections.Generic;
+using Unity.VisualScripting.ReorderableList.Element_Adder_Menu;
 using UnityEngine;
 using static SoundManager;
 
 public class Snake : MonoBehaviour
 {
-    private Vector2 direction;
-    private Vector2 currentDirection; // Текущее направление движения
-    private Vector2 previousDirection = Vector2.zero;
-    private List<Transform> segments = new List<Transform>(); // Список сегментов змейки
-    private List<Vector2> segmentDirections = new List<Vector2>(); // Список направлений сегментов
-    private List<bool> isCornerSegment = new List<bool>(); // Флаги для определения угловых сегментов
+	public GameObject segmentPrefab; // Префаб сегмента змейки
+	
+	public Sprite headUp, headDown, headLeft, headRight;
+	public Sprite tailUp, tailDown, tailLeft, tailRight;
+	public Sprite bodyVertical, bodyHorizontal, bodyTL, bodyTR, bodyBL, bodyBR;
 
-    public Transform segmentPrefab;
-    public Transform tailPrefab;
-    public Transform cornerUpRightPrefab; // Префаб углового сегмента: вверх-вправо
-    public Transform cornerRightDownPrefab; // Префаб углового сегмента: вправо-вниз
-    public Transform cornerDownLeftPrefab; // Префаб углового сегмента: вниз-влево
-    public Transform cornerLeftUpPrefab; // Префаб углового сегмента: влево-вверх
-
-    public float fixedTimestep = 0.06f;
-    public int initialSize = 6; // начальный размер змейки
+	private List<Transform> body = new List<Transform>(); // Список для хранения трансформов частей тела змейки
+	
+	private Vector2 direction = Vector2.right;
+	private Vector2 previousDirection = Vector2.zero;
+	
+	private readonly float fixedTimestep = 0.12f;
+	private bool newBlock = false; // Переменная для добавления нового блока
 
 
+	private void Awake()
+	{
+		// Устанавливаем fixedTimestep
+		Time.fixedDeltaTime = fixedTimestep;
+		
+		EventManager.foodIsЕaten.AddListener(()=>newBlock = true);
+		EventManager.snakeDied.AddListener(InizializeGame);
+	}
 
-    private void Awake()
-    {
-        // Устанавливаем fixedTimestep
-        Time.fixedDeltaTime = fixedTimestep;
-    }
+	void Start()
+	{
+		InizializeGame();
+	}
 
-    private void Start()
-    {
-        ResetGame();
-    }
+	void Update()
+	{
+		// Направление движения змейки на основе ввода
+		if (Input.GetKeyDown(KeyCode.W) && direction != Vector2.down)
+		{
+			direction = Vector2.up;
+			CheckDirectionChange();
+		}
+		else if (Input.GetKeyDown(KeyCode.S) && direction != Vector2.up)
+		{
+			direction = Vector2.down;
+			CheckDirectionChange();
+		}
+		else if (Input.GetKeyDown(KeyCode.A) && direction != Vector2.right)
+		{
+			direction = Vector2.left;
+			CheckDirectionChange();
+		}
+		else if (Input.GetKeyDown(KeyCode.D) && direction != Vector2.left)
+		{
+			direction = Vector2.right;
+			CheckDirectionChange();
+		}
+	}
 
-    private void Update()
-    {
-        // Направление движения змейки на основе ввода
-        if (Input.GetKeyDown(KeyCode.W) && currentDirection != Vector2.down)
-        {
+	private void CheckDirectionChange()
+	{
+		if (direction != previousDirection)
+		{
+			instanсe.PlaySound(instanсe.efxSource2, instanсe.moveSound);
+			previousDirection = direction; // Обновляем предыдущее направление
+		}
+	}
 
-            direction = Vector2.up;
-            CheckDirectionChange();
+	private void FixedUpdate()
+	{
+		MoveSnake();
+	}
 
-        }
-        else if (Input.GetKeyDown(KeyCode.S) && currentDirection != Vector2.up)
-        {
-            direction = Vector2.down;
-            CheckDirectionChange();
-        }
-        else if (Input.GetKeyDown(KeyCode.A) && currentDirection != Vector2.right)
-        {
-            direction = Vector2.left;
-            CheckDirectionChange();
-        }
-        else if (Input.GetKeyDown(KeyCode.D) && currentDirection != Vector2.left)
-        {
-            direction = Vector2.right;
-            CheckDirectionChange();
+	private void InizializeGame()
+	{
+		 // Удаляем все сегменты, кроме головы
+		for (int i = 0; i < body.Count; i++)
+		{
+			Destroy(body[i].gameObject);
+		}
 
-        }
-    }
+		// Очищаем списки
+		body.Clear();
+		// Очищаем начальные позиции
+		Vector2[] initialPositions = new Vector2[0];
+		
+		 // Сбрасываем направление и другие параметры
+		direction = Vector2.right;
+		newBlock = false;
+		
+		// Инициализация змейки
+		initialPositions = new Vector2[] { new (2, 2),new (1, 2),new (0, 2) };
 
-    private void CheckDirectionChange()
-    {
-        if (direction != previousDirection)
-        {
-            instanсe.PlaySound(instanсe.efxSource2, instanсe.moveSound);
-            previousDirection = direction; // Обновляем предыдущее направление
-        }
-    }
+		foreach (var pos in initialPositions)
+		{
+			GameObject block = Instantiate(segmentPrefab, new Vector3(pos.x, pos.y, 0), Quaternion.identity);
+			body.Add(block.transform);
+		}
 
-    // Движение змейки в зависимости от направления
-    private void FixedUpdate()
-    {
-        // Сохраняем текущие направления сегментов перед обновлением позиций
-        segmentDirections.Insert(0, direction);
+		Time.timeScale = 0;
+		UpdateHeadGraphics();
+		UpdateTailGraphics();
+	}
 
-        // Проходимся по всем сегментам в списке с конца
-        for (int i = segments.Count - 1; i > 0; i--)
-        {
+	private void MoveSnake()
+	{
+		List<Vector2> bodyCopy = new List<Vector2>();
 
-            // Обновляем позицию сегмента
-            segments[i].position = segments[i - 1].position;
+		if (newBlock)
+		{
+			foreach (var block in body)
+			{
+				bodyCopy.Add(block.position);
+			}
+			bodyCopy.Insert(0, bodyCopy[0] + direction);
+		
+			Vector3 newSegmentPosition = body[^1].position;
+			GameObject newSegmentObject = Instantiate(segmentPrefab, newSegmentPosition, Quaternion.identity);
+			body.Add(newSegmentObject.transform);
+			
+			for (int i = 0; i < body.Count; i++)
+			{
+				body[i].position = new Vector3(bodyCopy[i].x, bodyCopy[i].y, 0);			
+			}
+			newBlock = false;		
+		}
+		else
+		{
+			foreach (var block in body)
+			{
+				bodyCopy.Add(block.position);
+			}
 
+			bodyCopy.Insert(0, bodyCopy[0] + direction);
+			bodyCopy.RemoveAt(bodyCopy.Count - 1);
 
+			for (int i = 0; i < body.Count; i++)
+			{
+				body[i].position = new Vector3(bodyCopy[i].x, bodyCopy[i].y, 0);
+			}
+		}
+		
+		DrawSnake();
+	}
 
-            // Определяем предыдущее и текущее направления сегментов
-            Vector2 previousDirection = segmentDirections[i];
-            Vector2 currentDirection = segmentDirections[i - 1];
+	
+	private void DrawSnake()
+	{
+		UpdateHeadGraphics();
+		UpdateTailGraphics();
 
-            segments[i].rotation = Quaternion.Euler(new Vector3(0, 0, GetAngleFromDirection2(previousDirection, currentDirection)));
+		for (int index = 0; index < body.Count; index++)
+		{
+			Transform block = body[index];
+			Vector3 position = block.position;
+			SpriteRenderer renderer = block.GetComponent<SpriteRenderer>();
 
-            // Проверяем все возможные комбинации направлений для угловых сегментов
-            if ((previousDirection == Vector2.up && currentDirection == Vector2.right) ||
-                (previousDirection == Vector2.left && currentDirection == Vector2.down))
-            {
-                ReplaceWithCornerPrefab(i, cornerUpRightPrefab);
-            }
-            else if ((previousDirection == Vector2.right && currentDirection == Vector2.down) ||
-                     (previousDirection == Vector2.up && currentDirection == Vector2.left))
-            {
-                ReplaceWithCornerPrefab(i, cornerRightDownPrefab);
-            }
-            else if ((previousDirection == Vector2.down && currentDirection == Vector2.left) ||
-                     (previousDirection == Vector2.right && currentDirection == Vector2.up))
-            {
-                ReplaceWithCornerPrefab(i, cornerDownLeftPrefab);
-            }
-            else if ((previousDirection == Vector2.left && currentDirection == Vector2.up) ||
-                     (previousDirection == Vector2.down && currentDirection == Vector2.right))
-            {
-                ReplaceWithCornerPrefab(i, cornerLeftUpPrefab);
-            }
+			if (index == 0)
+				renderer.sprite = GetHeadSprite();
+				
+			else if (index == body.Count - 1)
+				renderer.sprite = GetTailSprite();
+				
+			else
+			{
+				Vector2 previousBlock = body[index + 1].position - position;
+				Vector2 nextBlock = body[index - 1].position - position;
 
-            else
-            {
-                segments[i].rotation = Quaternion.Euler(new Vector3(0, 0, GetAngleFromDirection(segmentDirections[i])));
+				if (previousBlock.x == nextBlock.x)
+					renderer.sprite = bodyVertical;
+					
+				else if (previousBlock.y == nextBlock.y)
+					renderer.sprite = bodyHorizontal;
 
+				else
+				{
+					if ((previousBlock.x == -1 && nextBlock.y == -1) || (previousBlock.y == -1 && nextBlock.x == -1))
+						renderer.sprite = bodyBL;
+						
+					else if ((previousBlock.x == -1 && nextBlock.y == 1) || (previousBlock.y == 1 && nextBlock.x == -1))
+						renderer.sprite = bodyTL;
+						
+					else if ((previousBlock.x == 1 && nextBlock.y == -1) || (previousBlock.y == -1 && nextBlock.x == 1))
+						renderer.sprite = bodyBR;
+						
+					else if ((previousBlock.x == 1 && nextBlock.y == 1) || (previousBlock.y == 1 && nextBlock.x == 1))
+						renderer.sprite = bodyTR;
+				}
+			}
+		}
+	}
 
-                // Если сегмент был угловым и сейчас перестал быть, заменяем обратно на segmentPrefab,
-                // но если сегмент был последним, заменяем на tailPrefab
-                if (isCornerSegment[i])
-                {
-                    Destroy(segments[i].gameObject);
-                    Transform newSegment;
-                    if (i == segments.Count - 1) // Проверяем, является ли сегмент последним
-                    {
-                        newSegment = Instantiate(tailPrefab);
-                    }
-                    else
-                    {
-                        newSegment = Instantiate(segmentPrefab);
-                    }
-                    newSegment.position = segments[i].position;
-                    newSegment.rotation = Quaternion.Euler(new Vector3(0, 0, GetAngleFromDirection(currentDirection)));
-                    segments[i] = newSegment;
-                    isCornerSegment[i] = false; // Помечаем сегмент как не угловой
-                }
-            }
+	private void UpdateHeadGraphics()
+	{
+		Vector2 headRelation = body[1].position - body[0].position;
+		SpriteRenderer snakeHead = body[0].GetComponent<SpriteRenderer>();
+		
+		if (headRelation == Vector2.right) snakeHead.sprite = headLeft;
+		else if (headRelation == Vector2.left) snakeHead.sprite = headRight;
+		else if (headRelation == Vector2.up) snakeHead.sprite = headDown;
+		else if (headRelation == Vector2.down) snakeHead.sprite = headUp;
+	}
 
+	private void UpdateTailGraphics()
+	{
+		//  body[^2] означет второй жлемент с конца, ^ - символ для обозначения индекса с обратной стороны
+		Vector2 tailRelation = body[^2].position - body[^1].position;
+		SpriteRenderer snakeTail = body[^1].GetComponent<SpriteRenderer>();
+		
+		if (tailRelation == Vector2.right) snakeTail.sprite = tailLeft;		
+		else if (tailRelation == Vector2.left) snakeTail.sprite = tailRight;
+		else if (tailRelation == Vector2.up) snakeTail.sprite = tailDown;
+		else if (tailRelation == Vector2.down) snakeTail.sprite = tailUp;
+	}
 
-        }
+	private Sprite GetHeadSprite()
+	{
+		Vector2 headRelation = body[1].position - body[0].position;
+		if (headRelation == Vector2.right) return headLeft;
+		if (headRelation == Vector2.left) return headRight;
+		if (headRelation == Vector2.up) return headDown;
+		return headUp;
+	}
 
-        // Обновляем позицию
-        transform.position = new Vector3(
-            Mathf.Round(transform.position.x) + direction.x,
-            Mathf.Round(transform.position.y) + direction.y,
-            0.0f
-        );
-        // Обновляем угол поворота головы
-        transform.rotation = Quaternion.Euler(new Vector3(0, 0, GetAngleFromDirection(direction)));
-
-        // Обновляем текущее направление движения
-        currentDirection = direction;
-
-    }
-
-    private void ReplaceWithCornerPrefab(int index, Transform cornerPrefab)
-    {
-        // Если сегмент еще не был заменен на угловой, заменяем на соответствующий cornerPrefab
-        if (!isCornerSegment[index])
-        {
-            Destroy(segments[index].gameObject);
-            Transform cornerSegment = Instantiate(cornerPrefab);
-            cornerSegment.position = segments[index].position;
-            segments[index] = cornerSegment;
-            isCornerSegment[index] = true; // Помечаем сегмент как угловой
-        }
-    }
-
-    private float GetAngleFromDirection2(Vector2 previousDirection, Vector2 currentDirection)
-    {
-        float angle = 0f;
-
-        if ((previousDirection == Vector2.down && currentDirection == Vector2.right) ||
-        (previousDirection == Vector2.up && currentDirection == Vector2.left) ||
-        (previousDirection == Vector2.left && currentDirection == Vector2.down) ||
-        (previousDirection == Vector2.right && currentDirection == Vector2.up))
-        {
-            angle = 90f;
-        }
-        else if ((previousDirection == Vector2.left && currentDirection == Vector2.up) ||
-                (previousDirection == Vector2.up && currentDirection == Vector2.right) ||
-                (previousDirection == Vector2.down && currentDirection == Vector2.left) ||
-                (previousDirection == Vector2.right && currentDirection == Vector2.down))
-        {
-            angle = -90f;
-        }
-
-
-
-        return angle;
-    }
-
-    private float GetAngleFromDirection(Vector2 direction)
-    {
-        float angle = 0f;
-        if (direction == Vector2.up)
-        {
-            angle = 90f;
-        }
-        else if (direction == Vector2.down)
-        {
-            angle = 270f;
-        }
-        else if (direction == Vector2.left)
-        {
-            angle = 180f;
-        }
-        else if (direction == Vector2.right)
-        {
-            angle = 0f;
-        }
-        return angle;
-    }
-
-    private void GrowSnake()
-    {
-        // Проверяем, есть ли уже хвостовой сегмент
-        if (segments.Count > 1)
-        {
-            // Заменяем текущий хвостовой сегмент на обычный сегмент
-            Transform newSegment = Instantiate(segmentPrefab);
-            newSegment.position = segments[segments.Count - 1].position;
-            newSegment.rotation = Quaternion.Euler(new Vector3(0, 0, GetAngleFromDirection(segmentDirections[segments.Count - 1])));
-            Destroy(segments[segments.Count - 1].gameObject);
-            segments[segments.Count - 1] = newSegment;
-            isCornerSegment[segments.Count - 1] = false; // Новый сегмент не является угловым
-        }
-
-        // Добавляем новый хвостовой сегмент
-        Transform tailSegment = Instantiate(tailPrefab);
-        tailSegment.position = segments[segments.Count - 1].position;
-        tailSegment.rotation = Quaternion.Euler(new Vector3(0, 0, GetAngleFromDirection(segmentDirections[segments.Count - 1])));
-        segments.Add(tailSegment);
-        segmentDirections.Add(segmentDirections[segments.Count - 2]);
-        isCornerSegment.Add(false); // Новый сегмент не является угловым
-    }
-
-    private void ResetGame()
-    {
-        // Удаляем все сегменты, кроме головы
-        for (int i = 1; i < segments.Count; i++)
-        {
-            Destroy(segments[i].gameObject);
-        }
-
-        // Очищаем списки
-        segments.Clear();
-        segmentDirections.Clear();
-        isCornerSegment.Clear();
-
-        // Добавляем голову обратно
-        segments.Add(transform);
-        segmentDirections.Add(Vector2.zero);
-        isCornerSegment.Add(false); // Голова не является угловой
-
-        // Добавляем начальные сегменты змейки, кроме последнего хвостового сегмента
-        for (int i = 1; i < initialSize - 1; i++)
-        {
-            segments.Add(Instantiate(segmentPrefab));
-            segmentDirections.Add(Vector2.zero);
-            isCornerSegment.Add(false); // Начальные сегменты не являются угловыми
-        }
-
-        // Добавляем хвостовой сегмент
-        if (initialSize > 1)
-        {
-            Transform tailSegment = Instantiate(tailPrefab);
-            tailSegment.position = new Vector3(-1, 0);
-            tailSegment.rotation = Quaternion.Euler(new Vector3(0, 0, GetAngleFromDirection(Vector2.right)));
-            segments.Add(tailSegment);
-            segmentDirections.Add(Vector2.right);
-            isCornerSegment.Add(false); // Хвостовой сегмент не является угловым
-        }
-
-        // Устанавливаем начальное направление движения
-        direction = Vector3.right;
-
-        // Сбрасываем позицию головы
-        transform.position = new Vector3(1, 0);
-        transform.rotation = Quaternion.Euler(new Vector3(0, 0, GetAngleFromDirection(direction)));
-
-        
-
-
-        previousDirection = Vector2.zero;
-        // Устанавливаем текущее направление движения
-        currentDirection = direction;
-        Time.timeScale = 0.0f;   
-    }
-
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.tag == "Food")
-        {
-            GrowSnake();
-            EventManager.OnFoodIsEaten();
-            instanсe.PlaySound(instanсe.efxSource1, instanсe.eatFoodSound);
-        }
-        else if (collision.tag == "Obstacle")
-        {
-            ResetGame();
-            EventManager.OnSnakeDied();
-            instanсe.PlaySound(instanсe.efxSource1, instanсe.gameOverSound);
-
-        }
-    }
+	private Sprite GetTailSprite()
+	{
+		Vector2 tailRelation = body[^2].position - body[^1].position;
+		if (tailRelation == Vector2.right) return tailLeft;
+		if (tailRelation == Vector2.left) return tailRight;
+		if (tailRelation == Vector2.up) return tailDown;
+		return tailUp;
+	}
 }
+
+
