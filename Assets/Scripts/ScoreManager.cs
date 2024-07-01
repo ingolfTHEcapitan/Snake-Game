@@ -4,14 +4,14 @@ using UnityEngine;
 public class ScoreManager : MonoBehaviour
 {
     public TextMeshProUGUI scoreText;
-    public TextMeshProUGUI hightScoreText;
+    public TextMeshProUGUI highScoreText;
     private int scoreNumber;
 
 
     private void Start()
     {
         // Устанавливаем текст для поля High Score из сохраненных данных.
-        hightScoreText.SetText($"{PlayerPrefs.GetInt("hightScore", 0)}");
+        highScoreText.SetText($"{PlayerPrefs.GetInt("highScore", 0)}");
     }
 
     private void Awake()
@@ -34,16 +34,23 @@ public class ScoreManager : MonoBehaviour
         scoreText.SetText($"{scoreNumber}");
         SetTextColor(Color.white);
     }
+
+    public void ResetHighScore()
+    {
+        PlayerPrefs.DeleteKey("highScore");
+        highScoreText.SetText($"{PlayerPrefs.GetInt("highScore", 0)}");
+    }
+
     private void UpdateScore()
     {
         // Проверяем, превышает ли текущий счет лучший результат.
-        if (scoreNumber > PlayerPrefs.GetInt("hightScore", 0))
+        if (scoreNumber > PlayerPrefs.GetInt("highScore", 0))
         {
             // Если да, обновляем лучший результат в сохраненных данных.
-            PlayerPrefs.SetInt("hightScore", scoreNumber);
+            PlayerPrefs.SetInt("highScore", scoreNumber);
 
             // Обновляем текст для поля "Лучший результат" на экране.
-            hightScoreText.SetText($"{PlayerPrefs.GetInt("hightScore", scoreNumber)}");
+            highScoreText.SetText($"{PlayerPrefs.GetInt("highScore", scoreNumber)}");
 
             SetTextColor(Color.yellow);
 
@@ -53,6 +60,6 @@ public class ScoreManager : MonoBehaviour
     private void SetTextColor(Color color)
     {
         scoreText.color = color;
-        hightScoreText.color = color;
+        highScoreText.color = color;
     }
 }
