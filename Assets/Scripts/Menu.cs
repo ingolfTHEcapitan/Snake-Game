@@ -2,38 +2,38 @@ using UnityEngine;
 
 public class Menu : MonoBehaviour
 {
-    private GameObject startMenu;
+	private GameObject _startMenu;
 
-    void Awake()
-    {
-        EventManager.snakeDied.AddListener(() => startMenu.SetActive(true));
-        startMenu = GameObject.Find("StartMenu");
-    }
-    
-    void Update()
-    {
-        if (AreKeysPressed(KeyCode.W, KeyCode.A, KeyCode.S, KeyCode.D))
-        {
-            HideStartMenu();
-        }
-    }
+	void Awake()
+	{
+		_startMenu = GameObject.Find("StartMenu");
+		EventManager.SnakeDiedEvent.AddListener(() => _startMenu.SetActive(true));
+	}
+	
+	void Update()
+	{
+		if (AreKeysPressed(KeyCode.W, KeyCode.A, KeyCode.S, KeyCode.D))
+		{
+			HideStartMenu();
+		}
+	}
 
-    private void HideStartMenu()
-    {
-        startMenu.SetActive(false);
-        Time.timeScale = 1.0f;
-    }
+	private void HideStartMenu()
+	{
+		_startMenu.SetActive(false);
+		Time.timeScale = 1.0f;
+	}
 
-    // Метод для проверки нажатия любых из переданных клавиш
-    private bool AreKeysPressed(params KeyCode[] keys)
-    {
-        foreach (KeyCode key in keys)
-            if (Input.GetKey(key)) return true;
-        return false;
-    }
+	// Метод для проверки нажатия любых из переданных клавиш
+	private bool AreKeysPressed(params KeyCode[] keys)
+	{
+		foreach (KeyCode key in keys)
+			if (Input.GetKey(key)) return true;
+		return false;
+	}
 
-    public void Quit()
-    {
-        Application.Quit();
-    }
+	public void Quit()
+	{
+		Application.Quit();
+	}
 }

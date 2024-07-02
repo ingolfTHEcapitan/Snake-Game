@@ -3,27 +3,26 @@ using UnityEngine;
 
 public class Spawner : MonoBehaviour
 {
-	public Transform applePrefab;
-	private GridManager gridManager;
+	public Transform ApplePrefab;
+	private GridManager _gridManager;
 
-	// Start is called before the first frame update
 	
-	void Awake() => EventManager.snakeDied.AddListener(RandomlySpawn);
+	void Awake() => EventManager.SnakeDiedEvent.AddListener(RandomSpawn);
 	
 	void Start()
 	{
-		gridManager = FindAnyObjectByType<GridManager>();
-		RandomlySpawn();
+		_gridManager = FindAnyObjectByType<GridManager>();
+		RandomSpawn();
 	}
 	public IEnumerator SpawnRutine()
 	{
 		yield return new WaitForSeconds(Random.Range(2, 5));
 
-		Transform food = Instantiate(applePrefab);
-		food.transform.position = gridManager.RandomizePosition();
+		Transform food = Instantiate(ApplePrefab);
+		food.transform.position = _gridManager.GetRandomPosition();
 	}
 	
-	private void RandomlySpawn()
+	private void RandomSpawn()
 	{
 		StartCoroutine(SpawnRutine());
 	}

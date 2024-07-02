@@ -2,22 +2,22 @@ using UnityEngine.Events;
 
 public class EventManager
 {
-	public static UnityEvent foodIs휺ten = new UnityEvent();
-	public static UnityEvent snakeDied = new UnityEvent();
-	public static UnityEvent snakeIsMoving = new UnityEvent();
+	public static UnityEvent Food휺tenEvent = new UnityEvent();
+	public static UnityEvent SnakeDiedEvent = new UnityEvent();
+	public static UnityEvent SnakeMovedEvent = new UnityEvent();
 
-	public static void OnFoodIsEaten()
+	public static void OnFoodEaten()
 	{
-		foodIs휺ten?.Invoke();
+		Food휺tenEvent?.Invoke();
 	}
 
 	public static void OnSnakeDied()
 	{
-		snakeDied?.Invoke();
+		SnakeDiedEvent?.Invoke();
 	}
 	
-	public static void OnSnakeIsMoving()
+	public static void OnSnakeMoved()
 	{
-		snakeIsMoving?.Invoke();
+		SnakeMovedEvent?.Invoke();
 	}
 }

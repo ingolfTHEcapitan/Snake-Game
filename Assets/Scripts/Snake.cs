@@ -3,28 +3,29 @@ using UnityEngine;
 
 public class Snake : MonoBehaviour
 {
-	public GameObject segmentPrefab; // Префаб сегмента змейки
+	private const float FIXED_TIMESTEP = 0.12f;
 	
-	public Sprite headUp, headDown, headLeft, headRight;
-	public Sprite tailUp, tailDown, tailLeft, tailRight;
-	public Sprite bodyVertical, bodyHorizontal, bodyTL, bodyTR, bodyBL, bodyBR;
+	[SerializeField] private GameObject _segmentPrefab; // Префаб сегмента змейки
+	
+	[SerializeField] private Sprite _headUp, _headDown, _headLeft, _headRight;
+	[SerializeField] private Sprite _tailUp, _tailDown, _tailLeft, _tailRight;
+	[SerializeField] private Sprite _bodyVertical, _bodyHorizontal, _bodyTL, _bodyTR, _bodyBL, _bodyBR;
 
-	private List<Transform> body = new List<Transform>(); // Список для хранения трансформов частей тела змейки
+	private List<Transform> _body = new List<Transform>(); // Список для хранения трансформов частей тела змейки
 	
-	private Vector2 direction = Vector2.right;
-	private Vector2 previousDirection = Vector2.zero;
+	private Vector2 _direction = Vector2.right;
+	private Vector2 _previousDirection = Vector2.zero;
 	
-	private readonly float fixedTimestep = 0.12f;
-	private bool newBlock = false; // Переменная для добавления нового блока
+	private bool _shouldAddNewSegment = false; // Переменная для добавления нового блока
 
 
 	private void Awake()
 	{
 		// Устанавливаем fixedTimestep
-		Time.fixedDeltaTime = fixedTimestep;
+		Time.fixedDeltaTime = FIXED_TIMESTEP;
 		
-		EventManager.foodIsЕaten.AddListener(()=>newBlock = true);
-		EventManager.snakeDied.AddListener(InizializeGame);
+		EventManager.FoodЕatenEvent.AddListener(()=>_shouldAddNewSegment = true);
+		EventManager.SnakeDiedEvent.AddListener(InizializeGame);
 	}
 
 	void Start()
@@ -35,34 +36,34 @@ public class Snake : MonoBehaviour
 	void Update()
 	{
 		// Направление движения змейки на основе ввода
-		if (Input.GetKeyDown(KeyCode.W) && direction != Vector2.down)
+		if (Input.GetKeyDown(KeyCode.W) && _direction != Vector2.down)
 		{
-			direction = Vector2.up;
+			_direction = Vector2.up;
 			CheckDirectionChange();
 		}
-		else if (Input.GetKeyDown(KeyCode.S) && direction != Vector2.up)
+		else if (Input.GetKeyDown(KeyCode.S) && _direction != Vector2.up)
 		{
-			direction = Vector2.down;
+			_direction = Vector2.down;
 			CheckDirectionChange();
 		}
-		else if (Input.GetKeyDown(KeyCode.A) && direction != Vector2.right)
+		else if (Input.GetKeyDown(KeyCode.A) && _direction != Vector2.right)
 		{
-			direction = Vector2.left;
+			_direction = Vector2.left;
 			CheckDirectionChange();
 		}
-		else if (Input.GetKeyDown(KeyCode.D) && direction != Vector2.left)
+		else if (Input.GetKeyDown(KeyCode.D) && _direction != Vector2.left)
 		{
-			direction = Vector2.right;
+			_direction = Vector2.right;
 			CheckDirectionChange();
 		}
 	}
 
 	private void CheckDirectionChange()
 	{
-		if (direction != previousDirection)
+		if (_direction != _previousDirection)
 		{
-			EventManager.OnSnakeIsMoving();
-			previousDirection = direction; // Обновляем предыдущее направление
+			EventManager.OnSnakeMoved();
+			_previousDirection = _direction; // Обновляем предыдущее направление
 		}
 	}
 
@@ -74,27 +75,27 @@ public class Snake : MonoBehaviour
 	private void InizializeGame()
 	{
 		 // Удаляем все сегменты, кроме головы
-		for (int i = 0; i < body.Count; i++)
+		for (int i = 0; i < _body.Count; i++)
 		{
-			Destroy(body[i].gameObject);
+			Destroy(_body[i].gameObject);
 		}
 
 		// Очищаем списки
-		body.Clear();
+		_body.Clear();
 		// Очищаем начальные позиции
 		Vector2[] initialPositions = new Vector2[0];
 		
 		 // Сбрасываем направление и другие параметры
-		direction = Vector2.right;
-		newBlock = false;
+		_direction = Vector2.right;
+		_shouldAddNewSegment = false;
 		
 		// Инициализация змейки
 		initialPositions = new Vector2[] { new (2, 2),new (1, 2),new (0, 2) };
 
 		foreach (var pos in initialPositions)
 		{
-			GameObject block = Instantiate(segmentPrefab, new Vector3(pos.x, pos.y, 0), Quaternion.identity);
-			body.Add(block.transform);
+			GameObject block = Instantiate(_segmentPrefab, new Vector3(pos.x, pos.y, 0), Quaternion.identity);
+			_body.Add(block.transform);
 		}
 
 		Time.timeScale = 0;
@@ -106,37 +107,37 @@ public class Snake : MonoBehaviour
 	{
 		List<Vector2> bodyCopy = new List<Vector2>();
 
-		if (newBlock)
+		if (_shouldAddNewSegment)
 		{
-			foreach (var block in body)
+			foreach (var block in _body)
 			{
 				bodyCopy.Add(block.position);
 			}
-			bodyCopy.Insert(0, bodyCopy[0] + direction);
+			bodyCopy.Insert(0, bodyCopy[0] + _direction);
 		
-			Vector3 newSegmentPosition = body[^1].position;
-			GameObject newSegmentObject = Instantiate(segmentPrefab, newSegmentPosition, Quaternion.identity);
-			body.Add(newSegmentObject.transform);
+			Vector3 newSegmentPosition = _body[^1].position;
+			GameObject newSegmentObject = Instantiate(_segmentPrefab, newSegmentPosition, Quaternion.identity);
+			_body.Add(newSegmentObject.transform);
 			
-			for (int i = 0; i < body.Count; i++)
+			for (int i = 0; i < _body.Count; i++)
 			{
-				body[i].position = new Vector3(bodyCopy[i].x, bodyCopy[i].y, 0);			
+				_body[i].position = new Vector3(bodyCopy[i].x, bodyCopy[i].y, 0);			
 			}
-			newBlock = false;		
+			_shouldAddNewSegment = false;		
 		}
 		else
 		{
-			foreach (var block in body)
+			foreach (var block in _body)
 			{
 				bodyCopy.Add(block.position);
 			}
 
-			bodyCopy.Insert(0, bodyCopy[0] + direction);
+			bodyCopy.Insert(0, bodyCopy[0] + _direction);
 			bodyCopy.RemoveAt(bodyCopy.Count - 1);
 
-			for (int i = 0; i < body.Count; i++)
+			for (int i = 0; i < _body.Count; i++)
 			{
-				body[i].position = new Vector3(bodyCopy[i].x, bodyCopy[i].y, 0);
+				_body[i].position = new Vector3(bodyCopy[i].x, bodyCopy[i].y, 0);
 			}
 		}
 		
@@ -148,42 +149,42 @@ public class Snake : MonoBehaviour
 		UpdateHeadGraphics();
 		UpdateTailGraphics();
 
-		for (int index = 0; index < body.Count; index++)
+		for (int index = 0; index < _body.Count; index++)
 		{
-			Transform block = body[index];
+			Transform block = _body[index];
 			Vector3 position = block.position;
 			SpriteRenderer renderer = block.GetComponent<SpriteRenderer>();
 
 			if (index == 0)
 				renderer.sprite = GetHeadSprite();
 				
-			else if (index == body.Count - 1)
+			else if (index == _body.Count - 1)
 				renderer.sprite = GetTailSprite();
 				
 			else
 			{
-				Vector2 previousBlock = body[index + 1].position - position;
-				Vector2 nextBlock = body[index - 1].position - position;
+				Vector2 previousBlock = _body[index + 1].position - position;
+				Vector2 nextBlock = _body[index - 1].position - position;
 
 				if (previousBlock.x == nextBlock.x)
-					renderer.sprite = bodyVertical;
+					renderer.sprite = _bodyVertical;
 					
 				else if (previousBlock.y == nextBlock.y)
-					renderer.sprite = bodyHorizontal;
+					renderer.sprite = _bodyHorizontal;
 
 				else
 				{
 					if ((previousBlock.x == -1 && nextBlock.y == -1) || (previousBlock.y == -1 && nextBlock.x == -1))
-						renderer.sprite = bodyBL;
+						renderer.sprite = _bodyBL;
 						
 					else if ((previousBlock.x == -1 && nextBlock.y == 1) || (previousBlock.y == 1 && nextBlock.x == -1))
-						renderer.sprite = bodyTL;
+						renderer.sprite = _bodyTL;
 						
 					else if ((previousBlock.x == 1 && nextBlock.y == -1) || (previousBlock.y == -1 && nextBlock.x == 1))
-						renderer.sprite = bodyBR;
+						renderer.sprite = _bodyBR;
 						
 					else if ((previousBlock.x == 1 && nextBlock.y == 1) || (previousBlock.y == 1 && nextBlock.x == 1))
-						renderer.sprite = bodyTR;
+						renderer.sprite = _bodyTR;
 				}
 			}
 		}
@@ -191,43 +192,43 @@ public class Snake : MonoBehaviour
 
 	private void UpdateHeadGraphics()
 	{
-		Vector2 headRelation = body[1].position - body[0].position;
-		SpriteRenderer snakeHead = body[0].GetComponent<SpriteRenderer>();
+		Vector2 headRelation = _body[1].position - _body[0].position;
+		SpriteRenderer snakeHead = _body[0].GetComponent<SpriteRenderer>();
 		
-		if (headRelation == Vector2.right) snakeHead.sprite = headLeft;
-		else if (headRelation == Vector2.left) snakeHead.sprite = headRight;
-		else if (headRelation == Vector2.up) snakeHead.sprite = headDown;
-		else if (headRelation == Vector2.down) snakeHead.sprite = headUp;
+		if (headRelation == Vector2.right) snakeHead.sprite = _headLeft;
+		else if (headRelation == Vector2.left) snakeHead.sprite = _headRight;
+		else if (headRelation == Vector2.up) snakeHead.sprite = _headDown;
+		else if (headRelation == Vector2.down) snakeHead.sprite = _headUp;
 	}
 
 	private void UpdateTailGraphics()
 	{
 		//  body[^2] означет второй жлемент с конца, ^ - символ для обозначения индекса с обратной стороны
-		Vector2 tailRelation = body[^2].position - body[^1].position;
-		SpriteRenderer snakeTail = body[^1].GetComponent<SpriteRenderer>();
+		Vector2 tailRelation = _body[^2].position - _body[^1].position;
+		SpriteRenderer snakeTail = _body[^1].GetComponent<SpriteRenderer>();
 		
-		if (tailRelation == Vector2.right) snakeTail.sprite = tailLeft;		
-		else if (tailRelation == Vector2.left) snakeTail.sprite = tailRight;
-		else if (tailRelation == Vector2.up) snakeTail.sprite = tailDown;
-		else if (tailRelation == Vector2.down) snakeTail.sprite = tailUp;
+		if (tailRelation == Vector2.right) snakeTail.sprite = _tailLeft;		
+		else if (tailRelation == Vector2.left) snakeTail.sprite = _tailRight;
+		else if (tailRelation == Vector2.up) snakeTail.sprite = _tailDown;
+		else if (tailRelation == Vector2.down) snakeTail.sprite = _tailUp;
 	}
 
 	private Sprite GetHeadSprite()
 	{
-		Vector2 headRelation = body[1].position - body[0].position;
-		if (headRelation == Vector2.right) return headLeft;
-		if (headRelation == Vector2.left) return headRight;
-		if (headRelation == Vector2.up) return headDown;
-		return headUp;
+		Vector2 headRelation = _body[1].position - _body[0].position;
+		if (headRelation == Vector2.right) return _headLeft;
+		if (headRelation == Vector2.left) return _headRight;
+		if (headRelation == Vector2.up) return _headDown;
+		return _headUp;
 	}
 
 	private Sprite GetTailSprite()
 	{
-		Vector2 tailRelation = body[^2].position - body[^1].position;
-		if (tailRelation == Vector2.right) return tailLeft;
-		if (tailRelation == Vector2.left) return tailRight;
-		if (tailRelation == Vector2.up) return tailDown;
-		return tailUp;
+		Vector2 tailRelation = _body[^2].position - _body[^1].position;
+		if (tailRelation == Vector2.right) return _tailLeft;
+		if (tailRelation == Vector2.left) return _tailRight;
+		if (tailRelation == Vector2.up) return _tailDown;
+		return _tailUp;
 	}
 }
 

@@ -2,29 +2,32 @@ using UnityEngine;
 
 public class Food : MonoBehaviour
 {
-	public static Food instanñe = null;
+	private static Food s_instanñe = null;
 	
-	private GridManager gridManager;
+	private GridManager _gridManager;
 
-	void Start() => gridManager = FindAnyObjectByType<GridManager>();
+	void Start()
+	{
+		_gridManager = FindAnyObjectByType<GridManager>();
+	}
 	
 	void Awake()
 	{
 		//Ïðîâåðüÿåì, ñóùåñòâóåò ëè óæå ýêçåìïëÿð Food
-		if (instanñe == null)
+		if (s_instanñe == null)
 			// Åñëè íåò äåëàåì òåêùèé ýêçåìïëÿð îñíîâíûì
-			instanñe = this;
-		else if (instanñe != this) // Åñëè ñóùåñòâóåò
+			s_instanñe = this;
+		else if (s_instanñe != this) // Åñëè ñóùåñòâóåò
 			Destroy(gameObject); // Óäàëÿåì, ðåàëèçèðóåò ïðèíöèï Ñèíãëòîí, òî÷òî ÷òî ýêçåìïëÿð êëàññà ìîæåò áûòü òîëüêî îäèí
 		DontDestroyOnLoad(gameObject);
 		
-		EventManager.snakeDied.AddListener(()=>Destroy(gameObject));
+		EventManager.SnakeDiedEvent.AddListener(()=>Destroy(gameObject));
 	}
 	
 	private void OnTriggerEnter2D(Collider2D collision)
 	{
-		if (collision.tag == "Obstacle")
-			transform.position = gridManager.RandomizePosition();
+		if (collision.CompareTag("Obstacle"))
+			transform.position = _gridManager.GetRandomPosition();
 	}
 }
 

@@ -458,11 +458,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a67247af8e305444cae27f33513b7664, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  efxSource1: {fileID: 41239719}
-  efxSource2: {fileID: 41239722}
-  gameOverSound: {fileID: 8300000, guid: 5fd64db1d39de3343a7e13ac81e14006, type: 3}
-  eatFoodSound: {fileID: 8300000, guid: 4382a7ff9cecddc4cbaa0eaebfc81b22, type: 3}
-  moveSound: {fileID: 8300000, guid: d430188e4912238408dc0707c0b34bdb, type: 3}
+  _efxSource1: {fileID: 41239719}
+  _efxSource2: {fileID: 41239722}
+  _gameOverSound: {fileID: 8300000, guid: 5fd64db1d39de3343a7e13ac81e14006, type: 3}
+  _eatFoodSound: {fileID: 8300000, guid: 4382a7ff9cecddc4cbaa0eaebfc81b22, type: 3}
+  _moveSound: {fileID: 8300000, guid: d430188e4912238408dc0707c0b34bdb, type: 3}
 --- !u!4 &41239721
 Transform:
   m_ObjectHideFlags: 0
@@ -644,7 +644,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.46600002}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -13.500107, y: -1}
+  m_AnchoredPosition: {x: -13.500132, y: -1}
   m_SizeDelta: {x: 23, y: 2}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &76323631
@@ -1816,7 +1816,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc9c7dcced6bb0a48915362873e4dfc4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  applePrefab: {fileID: 2312108511811035486, guid: 4c2a4098cb5e93b44b0c6b07f1cc2476, type: 3}
+  ApplePrefab: {fileID: 2312108511811035486, guid: 4c2a4098cb5e93b44b0c6b07f1cc2476, type: 3}
 --- !u!4 &1306402740
 Transform:
   m_ObjectHideFlags: 0
@@ -2231,21 +2231,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb46fe6dd619bb04a980d425fccbb624, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  segmentPrefab: {fileID: 6801025244632790919, guid: 7e27eabb916e8284ba6123aa50711bdb, type: 3}
-  headUp: {fileID: -637126585, guid: 744d7bb917a9ebc42a5198b7eea80b60, type: 3}
-  headDown: {fileID: -572831764, guid: 744d7bb917a9ebc42a5198b7eea80b60, type: 3}
-  headLeft: {fileID: -567679952, guid: 744d7bb917a9ebc42a5198b7eea80b60, type: 3}
-  headRight: {fileID: 895390077, guid: 744d7bb917a9ebc42a5198b7eea80b60, type: 3}
-  tailUp: {fileID: -1158642317, guid: 744d7bb917a9ebc42a5198b7eea80b60, type: 3}
-  tailDown: {fileID: -327875015, guid: 744d7bb917a9ebc42a5198b7eea80b60, type: 3}
-  tailLeft: {fileID: -1850082956, guid: 744d7bb917a9ebc42a5198b7eea80b60, type: 3}
-  tailRight: {fileID: -1542099894, guid: 744d7bb917a9ebc42a5198b7eea80b60, type: 3}
-  bodyVertical: {fileID: 1635469681, guid: 744d7bb917a9ebc42a5198b7eea80b60, type: 3}
-  bodyHorizontal: {fileID: -1942582481, guid: 744d7bb917a9ebc42a5198b7eea80b60, type: 3}
-  bodyTL: {fileID: 2095964350, guid: 744d7bb917a9ebc42a5198b7eea80b60, type: 3}
-  bodyTR: {fileID: 1872199140, guid: 744d7bb917a9ebc42a5198b7eea80b60, type: 3}
-  bodyBL: {fileID: 1624387120, guid: 744d7bb917a9ebc42a5198b7eea80b60, type: 3}
-  bodyBR: {fileID: 1816286724, guid: 744d7bb917a9ebc42a5198b7eea80b60, type: 3}
+  _segmentPrefab: {fileID: 6801025244632790919, guid: 7e27eabb916e8284ba6123aa50711bdb, type: 3}
+  _headUp: {fileID: -637126585, guid: 744d7bb917a9ebc42a5198b7eea80b60, type: 3}
+  _headDown: {fileID: -572831764, guid: 744d7bb917a9ebc42a5198b7eea80b60, type: 3}
+  _headLeft: {fileID: -567679952, guid: 744d7bb917a9ebc42a5198b7eea80b60, type: 3}
+  _headRight: {fileID: 895390077, guid: 744d7bb917a9ebc42a5198b7eea80b60, type: 3}
+  _tailUp: {fileID: -1158642317, guid: 744d7bb917a9ebc42a5198b7eea80b60, type: 3}
+  _tailDown: {fileID: -327875015, guid: 744d7bb917a9ebc42a5198b7eea80b60, type: 3}
+  _tailLeft: {fileID: -1850082956, guid: 744d7bb917a9ebc42a5198b7eea80b60, type: 3}
+  _tailRight: {fileID: -1542099894, guid: 744d7bb917a9ebc42a5198b7eea80b60, type: 3}
+  _bodyVertical: {fileID: 1635469681, guid: 744d7bb917a9ebc42a5198b7eea80b60, type: 3}
+  _bodyHorizontal: {fileID: -1942582481, guid: 744d7bb917a9ebc42a5198b7eea80b60, type: 3}
+  _bodyTL: {fileID: 2095964350, guid: 744d7bb917a9ebc42a5198b7eea80b60, type: 3}
+  _bodyTR: {fileID: 1872199140, guid: 744d7bb917a9ebc42a5198b7eea80b60, type: 3}
+  _bodyBL: {fileID: 1624387120, guid: 744d7bb917a9ebc42a5198b7eea80b60, type: 3}
+  _bodyBR: {fileID: 1816286724, guid: 744d7bb917a9ebc42a5198b7eea80b60, type: 3}
 --- !u!1 &1879209169
 GameObject:
   m_ObjectHideFlags: 0
@@ -2364,8 +2364,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 79dd7e0388e48ea46aa38aff2fae1f51, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scoreText: {fileID: 114006312}
-  highScoreText: {fileID: 1778214677}
+  ScoreText: {fileID: 114006312}
+  HighScoreText: {fileID: 1778214677}
 --- !u!114 &1879209175
 MonoBehaviour:
   m_ObjectHideFlags: 0

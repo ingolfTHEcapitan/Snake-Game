@@ -3,63 +3,65 @@ using UnityEngine;
 
 public class ScoreManager : MonoBehaviour
 {
-    public TextMeshProUGUI scoreText;
-    public TextMeshProUGUI highScoreText;
-    private int scoreNumber;
+	public TextMeshProUGUI ScoreText;
+	public TextMeshProUGUI HighScoreText;
+	private int _scoreCount;
 
+	private void Awake()
+	{
+		EventManager.FoodЕatenEvent.AddListener(IncreaseScore);
+		EventManager.SnakeDiedEvent.AddListener(ResetScore);
+	}
+	
+	private void Start()
+	{
+		// Устанавливаем текст для поля High Score из сохраненных данных.
+		HighScoreText.SetText($"{PlayerPrefs.GetInt("highScore", 0)}");
+	}
+	
+	private void IncreaseScore()
+	{
+		_scoreCount++;
+		// Обновляем текст для поля текущего счета.
+		ScoreText.text = $"{_scoreCount}";
+		// Проверяем, установлен ли новый рекорд, и обновляем его при необходимости.
+		UpdateScore();
+	}
 
-    private void Start()
-    {
-        // Устанавливаем текст для поля High Score из сохраненных данных.
-        highScoreText.SetText($"{PlayerPrefs.GetInt("highScore", 0)}");
-    }
+	private void UpdateScore()
+	{
+		// Проверяем, превышает ли текущий счет лучший результат.
+		if (_scoreCount > PlayerPrefs.GetInt("highScore", 0))
+		{
+			// Если да, обновляем лучший результат в сохраненных данных.
+			PlayerPrefs.SetInt("highScore", _scoreCount);
 
-    private void Awake()
-    {
-        EventManager.foodIsЕaten.AddListener(IncreaseScore);
-        EventManager.snakeDied.AddListener(ResetScore);
-    }
-    private void IncreaseScore()
-    {
-        scoreNumber++;
-        // Обновляем текст для поля текущего счета.
-        scoreText.text = $"{scoreNumber}";
-        // Проверяем, установлен ли новый рекорд, и обновляем его при необходимости.
-        UpdateScore();
-    }
+			// Обновляем текст для поля "Лучший результат" на экране.
+			HighScoreText.SetText($"{PlayerPrefs.GetInt("highScore", _scoreCount)}");
 
-    private void ResetScore()
-    {
-        scoreNumber = 0;
-        scoreText.SetText($"{scoreNumber}");
-        SetTextColor(Color.white);
-    }
+			SetTextColor(Color.yellow);
 
-    public void ResetHighScore()
-    {
-        PlayerPrefs.DeleteKey("highScore");
-        highScoreText.SetText($"{PlayerPrefs.GetInt("highScore", 0)}");
-    }
+		}
+	}
 
-    private void UpdateScore()
-    {
-        // Проверяем, превышает ли текущий счет лучший результат.
-        if (scoreNumber > PlayerPrefs.GetInt("highScore", 0))
-        {
-            // Если да, обновляем лучший результат в сохраненных данных.
-            PlayerPrefs.SetInt("highScore", scoreNumber);
+	private void SetTextColor(Color color)
+	{
+		ScoreText.color = color;
+		HighScoreText.color = color;
+	}
+	
+	private void ResetScore()
+	{
+		_scoreCount = 0;
+		ScoreText.SetText($"{_scoreCount}");
+		SetTextColor(Color.white);
+	}
 
-            // Обновляем текст для поля "Лучший результат" на экране.
-            highScoreText.SetText($"{PlayerPrefs.GetInt("highScore", scoreNumber)}");
-
-            SetTextColor(Color.yellow);
-
-        }
-    }
-
-    private void SetTextColor(Color color)
-    {
-        scoreText.color = color;
-        highScoreText.color = color;
-    }
+	public void ResetHighScore()
+	{
+		PlayerPrefs.DeleteKey("highScore");
+		HighScoreText.SetText($"{PlayerPrefs.GetInt("highScore", 0)}");
+	}
+	
+	
 }

@@ -4,11 +4,11 @@ public class SnakeSegmentColision : MonoBehaviour
 {
 	private void OnTriggerEnter2D(Collider2D collision)
 	{
-		if (collision.tag == "Food")
+		if (collision.CompareTag("Food"))
 		{
-			EventManager.OnFoodIsEaten();
+			EventManager.OnFoodEaten();
 		}
-		else if (collision.tag == "Obstacle" )
+		else if (collision.CompareTag("Obstacle"))
 		{
 			EventManager.OnSnakeDied();
 		}

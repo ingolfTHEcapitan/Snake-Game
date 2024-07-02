@@ -2,28 +2,28 @@ using UnityEngine;
 
 public class SoundManager : MonoBehaviour
 {
-	public static SoundManager instanñe = null;
-	public AudioSource efxSource1;
-	public AudioSource efxSource2;
+	private static SoundManager s_instanñe = null;
+	[SerializeField] private AudioSource _efxSource1;
+	[SerializeField] private AudioSource _efxSource2;
 
-	public AudioClip gameOverSound;
-	public AudioClip eatFoodSound;
-	public AudioClip moveSound;
-
+	[SerializeField] private AudioClip _gameOverSound;
+	[SerializeField] private AudioClip _eatFoodSound;
+	[SerializeField] private AudioClip _moveSound;
 
 	void Awake()
 	{
-		//Ïðîâåðüÿåì, ñóùåñòâóåò ëè óæå ýêçåìïëÿð SoundManager
-		if (instanñe == null)
-			// Åñëè íåò äåëàåì òåêùèé ýêçåìïëÿð îñíîâíûì
-			instanñe = this;
-		else if (instanñe != this) // Åñëè ñóùåñòâóåò
-			Destroy(gameObject); // Óäàëÿåì, ðåàëèçèðóåò ïðèíöèï Ñèíãëòîí, òî÷òî ÷òî ýêçåìïëÿð êëàññà ìîæåò áûòü òîëüêî îäèí
+		// Ðåàëèçàöèÿ ïàòòåðíà ñèíãëòîí
+		if (s_instanñe == null)
+			s_instanñe = this;
+		else if (s_instanñe != this) 
+			Destroy(gameObject);
+			
 		DontDestroyOnLoad(gameObject);
 		
-		EventManager.snakeDied.AddListener(() => PlaySound(efxSource1, gameOverSound));
-		EventManager.foodIsÅaten.AddListener(() => PlaySound(efxSource1, eatFoodSound));
-		EventManager.snakeIsMoving.AddListener(() => PlaySound(efxSource2, moveSound));
+		// Ïîäïèñêè íà ñîáûòèå
+		EventManager.SnakeDiedEvent.AddListener(() => PlaySound(_efxSource1, _gameOverSound));
+		EventManager.FoodÅatenEvent.AddListener(() => PlaySound(_efxSource1, _eatFoodSound));
+		EventManager.SnakeMovedEvent.AddListener(() => PlaySound(_efxSource2, _moveSound));
 		
 	}
 
@@ -32,7 +32,6 @@ public class SoundManager : MonoBehaviour
 		float randomPitch = Random.Range(0.95f, 1.05f);
 		source.pitch = randomPitch;
 		source.clip = clip;
-		source.Play();
-		
+		source.Play();	
 	}
 }
