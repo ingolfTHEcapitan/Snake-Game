@@ -6,16 +6,13 @@ public class Snake : MonoBehaviour
 	private const float FIXED_TIMESTEP = 0.12f;
 	
 	[SerializeField] private GameObject _segmentPrefab; // Префаб сегмента змейки
-	
 	[SerializeField] private Sprite _headUp, _headDown, _headLeft, _headRight;
 	[SerializeField] private Sprite _tailUp, _tailDown, _tailLeft, _tailRight;
 	[SerializeField] private Sprite _bodyVertical, _bodyHorizontal, _bodyTL, _bodyTR, _bodyBL, _bodyBR;
-
-	private List<Transform> _body = new List<Transform>(); // Список для хранения трансформов частей тела змейки
 	
+	private List<Transform> _body = new List<Transform>(); // Список для хранения трансформов частей тела змейки
 	private Vector2 _direction = Vector2.right;
 	private Vector2 _previousDirection = Vector2.zero;
-	
 	private bool _shouldAddNewSegment = false; // Переменная для добавления нового блока
 
 
@@ -90,7 +87,7 @@ public class Snake : MonoBehaviour
 		_shouldAddNewSegment = false;
 		
 		// Инициализация змейки
-		initialPositions = new Vector2[] { new (2, 2),new (1, 2),new (0, 2) };
+		initialPositions = new Vector2[] { new (0, 0),new (-1, 0),new (-2, 0) };
 
 		foreach (var pos in initialPositions)
 		{
