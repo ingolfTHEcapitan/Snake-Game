@@ -36,4 +36,10 @@ public class Menu : MonoBehaviour
 	{
 		Application.Quit();
 	}
+	
+	// Функция переключения полноэкранного режима
+    public void ToggleFullScreen()
+    {
+        Screen.fullScreen = !Screen.fullScreen;
+    }
 }
