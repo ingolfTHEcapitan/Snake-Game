@@ -2,10 +2,10 @@ using UnityEngine;
 
 public class SnakeMovement : MonoBehaviour
 {
-	[SerializeField] private float _movementSpeed = 0.18f;
+	[SerializeField] private float _movementSpeed = 0.12f;
 
 	private readonly float _maxMovementSpeed = 0.05f;
-	private readonly float _minMovementSpeed = 0.18f;
+	private readonly float _minMovementSpeed = 0.12f;
 	private bool _isAddingNewSegment  = false;
 
 	private SnakeBodyController _snakeBody;
