@@ -28,7 +28,7 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
             ""id"": ""25c2d278-b320-42a7-8cf9-7d0810af6b2c"",
             ""actions"": [
                 {
-                    ""name"": ""Movment"",
+                    ""name"": ""Movement"",
                     ""type"": ""Value"",
                     ""id"": ""0081a4d7-33fd-43fd-824a-8065d1b8a775"",
                     ""expectedControlType"": ""Vector2"",
@@ -45,7 +45,7 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Movment"",
+                    ""action"": ""Movement"",
                     ""isComposite"": true,
                     ""isPartOfComposite"": false
                 },
@@ -56,7 +56,7 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Movment"",
+                    ""action"": ""Movement"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -67,7 +67,7 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Movment"",
+                    ""action"": ""Movement"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -78,7 +78,7 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Movment"",
+                    ""action"": ""Movement"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -89,7 +89,7 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Movment"",
+                    ""action"": ""Movement"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -100,7 +100,7 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Movment"",
+                    ""action"": ""Movement"",
                     ""isComposite"": true,
                     ""isPartOfComposite"": false
                 },
@@ -111,7 +111,7 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Movment"",
+                    ""action"": ""Movement"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -122,7 +122,7 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Movment"",
+                    ""action"": ""Movement"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -133,7 +133,7 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Movment"",
+                    ""action"": ""Movement"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -144,7 +144,7 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Movment"",
+                    ""action"": ""Movement"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 }
@@ -155,7 +155,7 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
 }");
         // Snake
         m_Snake = asset.FindActionMap("Snake", throwIfNotFound: true);
-        m_Snake_Movment = m_Snake.FindAction("Movment", throwIfNotFound: true);
+        m_Snake_Movement = m_Snake.FindAction("Movement", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -217,12 +217,12 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
     // Snake
     private readonly InputActionMap m_Snake;
     private List<ISnakeActions> m_SnakeActionsCallbackInterfaces = new List<ISnakeActions>();
-    private readonly InputAction m_Snake_Movment;
+    private readonly InputAction m_Snake_Movement;
     public struct SnakeActions
     {
         private @InputActions m_Wrapper;
         public SnakeActions(@InputActions wrapper) { m_Wrapper = wrapper; }
-        public InputAction @Movment => m_Wrapper.m_Snake_Movment;
+        public InputAction @Movement => m_Wrapper.m_Snake_Movement;
         public InputActionMap Get() { return m_Wrapper.m_Snake; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -232,16 +232,16 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         {
             if (instance == null || m_Wrapper.m_SnakeActionsCallbackInterfaces.Contains(instance)) return;
             m_Wrapper.m_SnakeActionsCallbackInterfaces.Add(instance);
-            @Movment.started += instance.OnMovment;
-            @Movment.performed += instance.OnMovment;
-            @Movment.canceled += instance.OnMovment;
+            @Movement.started += instance.OnMovement;
+            @Movement.performed += instance.OnMovement;
+            @Movement.canceled += instance.OnMovement;
         }
 
         private void UnregisterCallbacks(ISnakeActions instance)
         {
-            @Movment.started -= instance.OnMovment;
-            @Movment.performed -= instance.OnMovment;
-            @Movment.canceled -= instance.OnMovment;
+            @Movement.started -= instance.OnMovement;
+            @Movement.performed -= instance.OnMovement;
+            @Movement.canceled -= instance.OnMovement;
         }
 
         public void RemoveCallbacks(ISnakeActions instance)
@@ -261,6 +261,6 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
     public SnakeActions @Snake => new SnakeActions(this);
     public interface ISnakeActions
     {
-        void OnMovment(InputAction.CallbackContext context);
+        void OnMovement(InputAction.CallbackContext context);
     }
 }
