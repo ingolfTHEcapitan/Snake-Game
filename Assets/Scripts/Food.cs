@@ -2,32 +2,29 @@ using UnityEngine;
 
 public class Food : MonoBehaviour
 {
-	private static Food s_instanсe = null;
+	private GridBounds _gridManager;
 	
-	private GridManager _gridManager;
-
+	public static Food Instance {get; set;}
+	
 	void Start()
 	{
-		_gridManager = FindAnyObjectByType<GridManager>();
+		_gridManager = FindAnyObjectByType<GridBounds>();
 	}
 	
 	void Awake()
 	{
-		//Проверьяем, существует ли уже экземпляр Food
-		if (s_instanсe == null)
-			// Если нет делаем текщий экземпляр основным
-			s_instanсe = this;
-		else if (s_instanсe != this) // Если существует
-			Destroy(gameObject); // Удаляем, реализирует принцип Синглтон, точто что экземпляр класса может быть только один
-		DontDestroyOnLoad(gameObject);
+		if (Instance == null)
+			Instance = this;
+		else if (Instance != this)
+			Destroy(gameObject);
 		
-		EventManager.SnakeDiedEvent.AddListener(()=>Destroy(gameObject));
+		GameEvents.SnakeDied.AddListener(()=>Destroy(gameObject));
+		GameEvents.FoodЕaten.AddListener(SetRandomPosition);
 	}
 	
-	private void OnTriggerEnter2D(Collider2D collision)
+	private void SetRandomPosition()
 	{
-		if (collision.CompareTag("Obstacle"))
-			transform.position = _gridManager.GetRandomPosition();
+		transform.position = _gridManager.GetRandomPosition();
 	}
 }
 

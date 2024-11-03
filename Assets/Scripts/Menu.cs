@@ -3,43 +3,51 @@ using UnityEngine;
 public class Menu : MonoBehaviour
 {
 	private GameObject _startMenu;
-
+	
+	private readonly KeyCode[] _keys = 
+	{
+		KeyCode.W, 
+		KeyCode.S, 
+		KeyCode.D, 
+		KeyCode.UpArrow, 
+		KeyCode.DownArrow, 
+		KeyCode.RightArrow
+	};
+	
 	void Awake()
 	{
 		_startMenu = GameObject.Find("StartMenu");
-		EventManager.SnakeDiedEvent.AddListener(() => _startMenu.SetActive(true));
+		GameEvents.SnakeDied.AddListener(() => StartMenuIsAcrive(true, 0.0f));
 	}
+	
+	private void Start() 
+	{
+		StartMenuIsAcrive(true, 0.0f);
+	}
+	
 	
 	void Update()
 	{
-		if (AreKeysPressed(KeyCode.W, KeyCode.A, KeyCode.S, KeyCode.D))
+		if (AreKeysPressed(_keys)) 
 		{
-			HideStartMenu();
+			StartMenuIsAcrive(false, 1.0f);
 		}
 	}
 
-	private void HideStartMenu()
+	private void StartMenuIsAcrive(bool isActive, float timeScale)
 	{
-		_startMenu.SetActive(false);
-		Time.timeScale = 1.0f;
+		_startMenu.SetActive(isActive);
+		Time.timeScale = timeScale;
 	}
 
-	// Метод для проверки нажатия любых из переданных клавиш
 	private bool AreKeysPressed(params KeyCode[] keys)
 	{
 		foreach (KeyCode key in keys)
-			if (Input.GetKey(key)) return true;
+			if (Input.GetKey(key)) 
+				return true;
+				
 		return false;
 	}
 
-	public void Quit()
-	{
-		Application.Quit();
-	}
-	
-	// Функция переключения полноэкранного режима
-    public void ToggleFullScreen()
-    {
-        Screen.fullScreen = !Screen.fullScreen;
-    }
+	public void Quit() => Application.Quit();
 }
