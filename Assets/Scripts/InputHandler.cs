@@ -15,7 +15,7 @@ namespace SnakeGame
 			_inputActions.Enable();
 			_inputActions.Snake.Movement.performed += context => UpdateDirection(context.ReadValue<Vector2>());
 		
-			GameEvents.SnakeDied.AddListener(ResetSnakeDirection);
+			EventBus.SnakeDied.AddListener(ResetSnakeDirection);
 		}
 
 		private void UpdateDirection(Vector2 inputDirection)
@@ -30,7 +30,7 @@ namespace SnakeGame
 			{
 				CurrentDirection = inputDirection;
 				_previousDirection = CurrentDirection;
-				GameEvents.OnSnakeMoved();
+				EventBus.OnSnakeMoved();
 			}
 		}
 

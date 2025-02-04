@@ -20,8 +20,8 @@ namespace SnakeGame.Food
 			else if (Instance != this)
 				Destroy(gameObject);
 		
-			GameEvents.SnakeDied.AddListener(()=>Destroy(gameObject));
-			GameEvents.FoodIsEaten.AddListener(SetRandomPosition);
+			EventBus.SnakeDied.AddListener(()=>Destroy(gameObject));
+			EventBus.FoodEaten.AddListener(SetRandomPosition);
 		}
 	
 		private void SetRandomPosition()

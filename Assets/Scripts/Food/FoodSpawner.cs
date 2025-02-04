@@ -14,7 +14,7 @@ namespace SnakeGame.Food
 		private void Awake()
 		{
 			_gridManager = FindAnyObjectByType<GridBounds>();
-			GameEvents.SnakeDied.AddListener(RandomSpawn);
+			EventBus.SnakeDied.AddListener(RandomSpawn);
 		}
 
 		private void Start() => RandomSpawn();

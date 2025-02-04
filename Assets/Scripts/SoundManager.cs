@@ -15,12 +15,12 @@ namespace SnakeGame
 
 		private void Awake()
 		{
-			GameEvents.SnakeDied.AddListener(() => PlaySound(_efxSource1, _gameOverSound));
-			GameEvents.FoodIsEaten.AddListener(() => PlaySound(_efxSource1, _eatFoodSound));
-			GameEvents.SnakeMoved.AddListener(() => PlaySound(_efxSource2, _moveSound));
+			EventBus.SnakeDied.AddListener(() => PlaySound(_efxSource1, _gameOverSound));
+			EventBus.FoodEaten.AddListener(() => PlaySound(_efxSource1, _eatFoodSound));
+			EventBus.SnakeMoved.AddListener(() => PlaySound(_efxSource2, _moveSound));
 		}
 
-		public void PlaySound(AudioSource source, AudioClip clip)
+		private void PlaySound(AudioSource source, AudioClip clip)
 		{
 			float randomPitch = Random.Range(0.95f, 1.05f);
 			source.pitch = randomPitch;

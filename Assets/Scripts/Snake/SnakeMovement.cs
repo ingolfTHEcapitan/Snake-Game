@@ -3,26 +3,27 @@ using UnityEngine;
 
 namespace SnakeGame.Snake
 {
+	[RequireComponent(typeof(SnakeBodyController))]
 	public class SnakeMovement : MonoBehaviour
 	{
 		[SerializeField] private float _movementSpeed = 0.12f;
 
 		private const float MaxMovementSpeed = 0.05f;
 		private const float MinMovementSpeed = 0.12f;
-		private bool _isAddingNewSegment  = false;
-		private SnakeBodyController _snakeBody;
+		private bool _isAddingNewSegment;
+		private SnakeBodyController _body;
 
 		private void Awake()
 		{
 			Time.fixedDeltaTime = _movementSpeed;
 		
-			_snakeBody = GetComponent<SnakeBodyController>();
+			_body = GetComponent<SnakeBodyController>();
 		
-			GameEvents.FoodIsEaten.AddListener(OnFoodEaten);
-			GameEvents.SnakeDied.AddListener(OnSnakeDied);
+			EventBus.FoodEaten.AddListener(IncreaseMovementSpeed);
+			EventBus.SnakeDied.AddListener(ResetMovementSpeed);
 		}
 
-		private void OnFoodEaten()
+		private void IncreaseMovementSpeed()
 		{
 			_isAddingNewSegment = true;
 		
@@ -33,7 +34,7 @@ namespace SnakeGame.Snake
 			}
 		}
 
-		private void OnSnakeDied()
+		private void ResetMovementSpeed()
 		{
 			_movementSpeed = MinMovementSpeed; 
 			Time.fixedDeltaTime = _movementSpeed;
@@ -48,12 +49,12 @@ namespace SnakeGame.Snake
 		{
 			if (_isAddingNewSegment)
 			{
-				_snakeBody.AddSegment();
+				_body.AddSegment();
 				_isAddingNewSegment = false;
 			}
 		
-			_snakeBody.UpdateSegmentPositions(InputHandler.CurrentDirection);
-			GameEvents.OnUpdateGraphics();
+			_body.UpdateSegmentPositions(InputHandler.CurrentDirection);
+			EventBus.OnGraphicsUpdateRequested();
 		}
 	}
 }

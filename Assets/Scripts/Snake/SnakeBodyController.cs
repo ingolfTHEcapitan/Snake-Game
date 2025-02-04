@@ -7,11 +7,11 @@ namespace SnakeGame.Snake
 	{
 		[SerializeField] private Transform _segmentPrefab;
 		[SerializeField] private Vector2[] _initialPositions = { new (0, 0), new (-1, 0), new (-2, 0) };
-		public List<Transform> Body {get;} = new();
+		public List<Transform> Segments {get;} = new();
 
 		private void Awake()
 		{
-			GameEvents.SnakeDied.AddListener(CreateSnake);
+			EventBus.SnakeDied.AddListener(CreateSnake);
 		}
 
 		private void Start()
@@ -21,45 +21,44 @@ namespace SnakeGame.Snake
 		
 		public void AddSegment()
 		{
-			Vector3 position = Body[^1].position;
+			Vector3 position = Segments[^1].position;
 			Transform newSegment = Instantiate(_segmentPrefab, position, Quaternion.identity);
 			newSegment.gameObject.AddComponent<SnakeBodyCollision>();
 		
-			Body.Add(newSegment);
+			Segments.Add(newSegment);
 		}
 		
 		public void UpdateSegmentPositions(Vector2 direction)
 		{
-			List<Vector2> bodyCopy = new List<Vector2>();
+			List<Vector2> segmentsCopy = new List<Vector2>();
 		
-			foreach (var segment in Body)
+			foreach (var segment in Segments)
 			{
-				bodyCopy.Add(segment.position);
+				segmentsCopy.Add(segment.position);
 			}
 
-			bodyCopy.Insert(0, bodyCopy[0] + direction);
-			bodyCopy.RemoveAt(bodyCopy.Count - 1);
+			segmentsCopy.Insert(0, segmentsCopy[0] + direction);
+			segmentsCopy.RemoveAt(segmentsCopy.Count - 1);
 
-			for (int i = 0; i < Body.Count; i++)
+			for (int i = 0; i < Segments.Count; i++)
 			{
-				Body[i].position = new Vector2(bodyCopy[i].x, bodyCopy[i].y);
+				Segments[i].position = new Vector2(segmentsCopy[i].x, segmentsCopy[i].y);
 			}
 		}
 		
-
 		private void CreateSnake()
 		{
 			ClearSnake();
 			InitializeSegments();
-			GameEvents.OnUpdateGraphics();
+			EventBus.OnGraphicsUpdateRequested();
 		}
 
 		private void ClearSnake()
 		{
-			foreach (var segment in Body)
+			foreach (var segment in Segments)
 				Destroy(segment.gameObject);
 
-			Body.Clear();
+			Segments.Clear();
 		}
 	
 		private void InitializeSegments()
@@ -70,7 +69,7 @@ namespace SnakeGame.Snake
 			
 				Vector2 position = new Vector2(_initialPositions[i].x, _initialPositions[i].y);
 				Transform segment = Instantiate(_segmentPrefab, position, Quaternion.identity);
-				Body.Add(segment);
+				Segments.Add(segment);
 
 				if (isHeadSegment)
 					segment.gameObject.AddComponent<SnakeHeadCollision>();

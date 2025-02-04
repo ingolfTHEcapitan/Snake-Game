@@ -11,8 +11,8 @@ namespace SnakeGame
 
 		private void Awake()
 		{
-			GameEvents.FoodIsEaten.AddListener(IncreaseScore);
-			GameEvents.SnakeDied.AddListener(ResetScore);
+			EventBus.FoodEaten.AddListener(IncreaseScore);
+			EventBus.SnakeDied.AddListener(ResetScore);
 		}
 	
 		private void Start()

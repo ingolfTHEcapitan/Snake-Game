@@ -19,7 +19,7 @@ namespace SnakeGame
 		private void Awake()
 		{
 			_startMenu = GameObject.Find("StartMenu");
-			GameEvents.SnakeDied.AddListener(() => StartMenuIsAcrive(true, 0.0f));
+			EventBus.SnakeDied.AddListener(() => StartMenuIsAcrive(true, 0.0f));
 		}
 	
 		private void Start() 
