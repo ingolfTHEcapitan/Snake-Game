@@ -1,12 +1,15 @@
 using UnityEngine;
 
-public class SnakeBodyCollision : MonoBehaviour
+namespace SnakeGame.Snake
 {
-	private void OnTriggerEnter2D(Collider2D collision)
+	public class SnakeBodyCollision : MonoBehaviour
 	{
-		if (collision.CompareTag("Obstacle"))
+		private void OnTriggerEnter2D(Collider2D collision)
 		{
-			GameEvents.OnSnakeDied();
+			if (collision.CompareTag("Obstacle"))
+			{
+				GameEvents.OnSnakeDied();
+			}
 		}
 	}
 }
