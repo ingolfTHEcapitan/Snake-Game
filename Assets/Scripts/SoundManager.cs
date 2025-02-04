@@ -25,7 +25,7 @@ namespace SnakeGame
 			float randomPitch = Random.Range(0.95f, 1.05f);
 			source.pitch = randomPitch;
 			source.clip = clip;
-			source.Play();	
+			source.PlayOneShot(clip);	
 		}
 	}
 }
