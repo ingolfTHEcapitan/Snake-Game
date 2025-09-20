@@ -1,9 +1,12 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace SnakeGame
 {
 	public class Menu : MonoBehaviour
 	{
+		[SerializeField] private Button _exitButton;
+		
 		private GameObject _startMenu;
 	
 		private readonly KeyCode[] _keys = 
@@ -25,9 +28,11 @@ namespace SnakeGame
 		private void Start() 
 		{
 			StartMenuIsAcrive(true, 0.0f);
+
+			if (Application.platform == RuntimePlatform.WebGLPlayer)
+				_exitButton.gameObject.SetActive(false);
 		}
-
-
+		
 		private void Update()
 		{
 			if (AreKeysPressed(_keys)) 
